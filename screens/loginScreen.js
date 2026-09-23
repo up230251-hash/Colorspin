@@ -1,38 +1,340 @@
-import { View, Text, Button, StyleSheet } from "react-native";
+import { useState } from "react";
+import {
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    StyleSheet,
+    SafeAreaView,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
-export default function loginScreen ({ navigation }) {
+export default function LoginScreen({ navigation }) {
+    const [usuario, setUsuario] = useState("");
+    const [contrasena, setContrasena] = useState("");
+    const [verPassword, setVerPassword] = useState(false);
+    const [error, setError] = useState("");
+
+    const validarEmail = (email) =>
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+    const manejarLogin = () => {
+        setError("");
+
+        if (!usuario.trim() || !contrasena.trim()) {
+            setError("Completa tu email y contraseña.");
+            return;
+        }
+
+        if (!validarEmail(usuario)) {
+            setError("Ingresa un email válido.");
+            return;
+        }
+
+        if (contrasena.length < 6) {
+            setError("La contraseña debe tener al menos 6 caracteres.");
+            return;
+        }
+
+        // Por ahora solo navegamos al perfil.
+        // Después aquí se conectará el backend de tu compañero.
+        navigation.navigate("Perfil", {
+            usuario: usuario,
+        });
+    };
+
     return (
-        <View style={StyleSheet.container}>
-            <Text style={StyleSheet.titulo}> Login </Text>
-            <Button
-                title = 'Regresar a inicio'
-                onPress = {() => navigation.goBack()}
-            />
+        <SafeAreaView style={styles.container}>
 
-            <View style={styles.contentCard}>
-                <TextInput style={styles.input}
-                    placeholder = "Correo"
-                ></TextInput>
-                <TextInput style={styles.input}
-                    placeholder = "Telefono"
-                ></TextInput>
+            <View style={styles.header}>
+                <View style={styles.logoBadge}>
+                    <Text style={styles.logoLetra}>P</Text>
+                </View>
+
+                <Text style={styles.titulo}>
+                    Welcome to ColorsPin
+                </Text>
+
+                <Text style={styles.subtitulo}>
+                    Find new ideas to try
+                </Text>
             </View>
-        <Button style={styles.boton} title = "Guardar"/>
-        </View>
+
+            <View style={styles.form}>
+
+                <Text style={styles.label}>Email</Text>
+
+                <TextInput
+                    style={styles.input}
+                    placeholder="yourname@gmail.com"
+                    placeholderTextColor="#9aa0a6"
+                    autoCapitalize="none"
+                    keyboardType="email-address"
+                    value={usuario}
+                    onChangeText={setUsuario}
+                />
+
+                <Text style={styles.label}>Password</Text>
+
+                <View style={styles.passwordWrapper}>
+
+                    <TextInput
+                        style={styles.passwordInput}
+                        placeholder="Enter your password"
+                        placeholderTextColor="#9aa0a6"
+                        secureTextEntry={!verPassword}
+                        value={contrasena}
+                        onChangeText={setContrasena}
+                    />
+
+                    <TouchableOpacity
+                        onPress={() => setVerPassword(!verPassword)}
+                    >
+                        <Ionicons
+                            name={
+                                verPassword
+                                    ? "eye-off-outline"
+                                    : "eye-outline"
+                            }
+                            size={20}
+                            color="#6b7280"
+                        />
+                    </TouchableOpacity>
+
+                </View>
+
+                <TouchableOpacity style={styles.forgotWrapper}>
+                    <Text style={styles.forgotTexto}>
+                        Forgot password?
+                    </Text>
+                </TouchableOpacity>
+
+                {error ? (
+                    <Text style={styles.errorTexto}>
+                        {error}
+                    </Text>
+                ) : null}
+
+                <TouchableOpacity
+                    style={styles.botonLogin}
+                    onPress={manejarLogin}
+                >
+                    <Text style={styles.botonLoginTexto}>
+                        Log in
+                    </Text>
+                </TouchableOpacity>
+
+                <View style={styles.divisorWrapper}>
+                    <View style={styles.linea} />
+
+                    <Text style={styles.divisorTexto}>
+                        OR
+                    </Text>
+
+                    <View style={styles.linea} />
+                </View>
+
+                <TouchableOpacity style={styles.botonGoogle}>
+                    <Ionicons
+                        name="logo-google"
+                        size={18}
+                        color="#374151"
+                    />
+
+                    <Text style={styles.botonGoogleTexto}>
+                        Continue with Google
+                    </Text>
+                </TouchableOpacity>
+
+            </View>
+
+            <View style={styles.footer}>
+                <Text style={styles.footerTexto}>
+                    Not a member yet?{" "}
+                </Text>
+
+                <TouchableOpacity>
+                    <Text style={styles.footerLink}>
+                        Register now
+                    </Text>
+                </TouchableOpacity>
+            </View>
+
+        </SafeAreaView>
     );
 }
 
-const styles =  StyleSheet.create({
+const ROJO = "#E1174A";
+
+const styles = StyleSheet.create({
+
     container: {
         flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#fff'
+        backgroundColor: "#fff",
+        paddingHorizontal: 28,
+    },
+
+    header: {
+        alignItems: "center",
+        marginTop: 45,
+        marginBottom: 30,
+    },
+
+    logoBadge: {
+        width: 45,
+        height: 45,
+        borderRadius: 23,
+        backgroundColor: ROJO,
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: 16,
+    },
+
+    logoLetra: {
+        color: "#fff",
+        fontWeight: "700",
+        fontSize: 20,
     },
 
     titulo: {
-        fontSize: 24,
-        marginTop: 20,
+        fontSize: 21,
+        fontWeight: "700",
+        color: "#111827",
+        textAlign: "center",
     },
-    
+
+    subtitulo: {
+        fontSize: 13,
+        color: "#6b7280",
+        marginTop: 6,
+    },
+
+    form: {
+        flex: 1,
+        paddingHorizontal: 2,
+    },
+
+    label: {
+        fontSize: 13,
+        color: "#374151",
+        marginBottom: 8,
+        marginTop: 18,
+    },
+
+    input: {
+        borderWidth: 1,
+        borderColor: "#e5e7eb",
+        borderRadius: 25,
+        paddingHorizontal: 16,
+        paddingVertical: 13,
+        fontSize: 14,
+        color: "#111827",
+        backgroundColor: "#fff",
+    },
+
+    passwordWrapper: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        borderWidth: 1,
+        borderColor: "#e5e7eb",
+        borderRadius: 25,
+        paddingHorizontal: 16,
+        backgroundColor: "#fff",
+        marginBottom: 2,
+    },
+
+    passwordInput: {
+        flex: 1,
+        paddingVertical: 13,
+        fontSize: 14,
+        color: "#111827",
+    },
+
+    forgotWrapper: {
+        alignSelf: "flex-end",
+        marginTop: 12,
+    },
+
+    forgotTexto: {
+        color: ROJO,
+        fontSize: 12,
+        fontWeight: "600",
+    },
+
+    errorTexto: {
+        color: "#dc2626",
+        fontSize: 12,
+        marginTop: 12,
+        textAlign: "center",
+    },
+
+    botonLogin: {
+        backgroundColor: ROJO,
+        borderRadius: 25,
+        paddingVertical: 15,
+        alignItems: "center",
+        marginTop: 26,
+    },
+
+    botonLoginTexto: {
+        color: "#fff",
+        fontWeight: "700",
+        fontSize: 15,
+    },
+
+    divisorWrapper: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginVertical: 24,
+    },
+
+    linea: {
+        flex: 1,
+        height: 1,
+        backgroundColor: "#e5e7eb",
+    },
+
+    divisorTexto: {
+        marginHorizontal: 14,
+        fontSize: 11,
+        color: "#9ca3af",
+    },
+
+    botonGoogle: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 10,
+        borderWidth: 1,
+        borderColor: "#e5e7eb",
+        borderRadius: 25,
+        paddingVertical: 14,
+        backgroundColor: "#fff",
+    },
+
+    botonGoogleTexto: {
+        fontSize: 14,
+        fontWeight: "600",
+        color: "#374151",
+    },
+
+    footer: {
+        flexDirection: "row",
+        justifyContent: "center",
+        paddingTop: 20,
+        paddingBottom: 30,
+    },
+
+    footerTexto: {
+        fontSize: 13,
+        color: "#6b7280",
+    },
+
+    footerLink: {
+        fontSize: 13,
+        color: ROJO,
+        fontWeight: "700",
+    },
+
 });
