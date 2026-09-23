@@ -1,79 +1,49 @@
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'; 
-import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
 
-import inicioScreen from "./screens/inicioScreen";
-import loginScreen from "./screens/loginScreen";
-import perfilScreen from "./screens/perfilScreen";
-import spinScreen from "./screens/SpinScreen";
+import { NavigationContainer } from '@react-navigation/native';
 
-const Tab = createBottomTabNavigator(); 
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-export default function App() {
+import LoginScreen from './screens/loginScreen';
 
-  return (
-    <NavigationContainer>
-      <Tab.Navigator 
-        screenOptions = {({ route }) => ({
-          tabBarIcon: ({color, size}) => {
-            let iconName;
+import PerfilScreen from './screens/perfilScreen';
 
-            if (route.name === 'inicio'){
-              iconName = 'home';
-            } else if (route.name === "Spin"){
-              iconName = 'color-palette-outline';              
-            } else if (route.name === "perfil"){
-              iconName = 'person';
-            }
-
-            return <Ionicons name={iconName} color = {color} size={size}></Ionicons>
-          },
-          tabBarActiveTintColor: '#007AFF',
-          tabBarActiveTintColor: 'gray'
-        })}
-      >
-        <Tab.Screen name='inicio' component ={inicioScreen}></Tab.Screen>
-        <Tab.Screen name='spin' component ={spinScreen}></Tab.Screen>
-        <Tab.Screen name='perfil' component ={perfilScreen}></Tab.Screen>
-        <Tab.Screen name='login' component ={loginScreen}></Tab.Screen>
-      </Tab.Navigator>
-    </NavigationContainer>
-  );
-}
-
-
-
-
-
-
-
-
-/*import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from '@react-navigation/native';
-import { createbottomTabNavigator } from '@react-navigation/bottom-tabs'; 
-import { Ionicons } from '@expo/vector-icons';
-
-import InicioScreen from "./screens/InicioScreen";
-import DetalleScreen from "./screens/DetalleScreen";
-import formularioScreen from "./screens/formularioScreen";
-import PerfilScreen from "./screens/PerfilScreen";
 
 const Stack = createNativeStackNavigator();
-const Tab = createBottonTabNavigator(); 
+
 
 export default function App() {
 
   return (
-    <NavigationContainer>
-      <Tab.Navigator initalRouteName='inicio'>
-        <Tab.Screen name='inicio' component ={InicioScreen}></Tab.Screen>
-        <Tab.Screen name='detalle' component ={DetalleScreen}></Tab.Screen>
-        <Tab.Screen name='formulario' component ={formularioScreen}></Tab.Screen>
-        <Tab.Screen name='Perfil' component ={PerfilScreen}></Tab.Screen>
-      </Tab.Navigator>
-    </NavigationContainer>
-  );
-}
 
- */
+    <NavigationContainer>
+
+      <Stack.Navigator
+        initialRouteName="Login"
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+
+        {/* PANTALLA LOGIN */}
+
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+        />
+
+
+        {/* PANTALLA PERFIL */}
+
+        <Stack.Screen
+          name="Perfil"
+          component={PerfilScreen}
+        />
+
+      </Stack.Navigator>
+
+    </NavigationContainer>
+
+  );
+
+}
