@@ -63,11 +63,11 @@ export default function SignUpScreen({ navigation }) {
 
             <View style={styles.form}>
 
-                <Text style={styles.label}>Nombre de usuario</Text>
+                <Text style={styles.label}>Usuario</Text>
 
                 <TextInput
                     style={styles.input}
-                    placeholder="Nombre"
+                    placeholder="name"
                     placeholderTextColor="#9aa0a6"
                     autoCapitalize="none"
                     value={usuario}

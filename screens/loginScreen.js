@@ -56,7 +56,7 @@ export default function LoginScreen({ navigation }) {
                 </Text>
 
                 <Text style={styles.subtitulo}>
-                    Find new ideas to try
+                    Take a picture
                 </Text>
             </View>
 
