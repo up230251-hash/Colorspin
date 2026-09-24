@@ -124,7 +124,7 @@ export default function perfilScreen({ navigation }) {
             <TouchableOpacity
               key={item.id}
               style={styles.tablero}
-              onPress={() => Alert.alert(item.nombre, "Tablero seleccionado")}
+              onPress={() => navigation.navigate("detalle", { board: item })}
             >
               <Image source={{ uri: item.imagen }} style={styles.tableroImagen} />
               <Text style={styles.tableroNombre}>{item.nombre}</Text>
