@@ -39,7 +39,7 @@ export default function inicioScreen({ navigation }) {
           style={[styles.filtroBtn, orden === 'nuevo' && styles.filtroActivo]}
           onPress={() => setOrden('nuevo')}
         >
-          <Ionicons name="arrow-down" size={16} color={orden === 'nuevo' ? '#fff' : '#333'} />
+          <Ionicons name="arrow-down" size={16} color={orden === 'nuevo' ? '#333' : '#333'} />
           <Text style={[styles.filtroTexto, orden === 'nuevo' && styles.filtroTextoActivo]}>
             Más reciente
           </Text>
@@ -69,7 +69,7 @@ export default function inicioScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff', paddingTop: 10 },
+  container: { flex: 1, backgroundColor: '#0B1220', paddingTop: 10 },
   filtros: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -87,9 +87,9 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: '#f0f0f0',
   },
-  filtroActivo: { backgroundColor: '#007AFF' },
+  filtroActivo: { backgroundColor: '#66F1C2' },
   filtroTexto: { fontSize: 13, color: '#333' },
-  filtroTextoActivo: { color: '#fff' },
+  filtroTextoActivo: { color: '#333' },
   grid: { paddingHorizontal: 8 },
   card: {
     flex: 1,

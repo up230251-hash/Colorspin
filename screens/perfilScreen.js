@@ -90,17 +90,7 @@ export default function perfilScreen({ navigation }) {
             style={styles.avatar}
           />
           <Text style={styles.nombre}>Elena Rostova</Text>
-          <Text style={styles.usuario}>@elenarostova</Text>
-
-          <View style={styles.stats}>
-            <Text style={styles.statsTexto}>
-              <Text style={styles.statsNumero}>12.4k</Text> followers
-            </Text>
-            <Text style={styles.statsSeparador}>·</Text>
-            <Text style={styles.statsTexto}>
-              <Text style={styles.statsNumero}>432</Text> following
-            </Text>
-          </View>
+          
         </View>
 
         <View style={styles.tabs}>
@@ -159,6 +149,7 @@ const styles = StyleSheet.create({
     borderRadius: 42,
     marginBottom: 12,
     backgroundColor: "#eee",
+    marginVertical: 20
   },
   nombre: {
     fontSize: 20,

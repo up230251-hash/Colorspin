@@ -9,8 +9,9 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function LoginScreen({ navigation }) {
+export default function SignUpScreen({ navigation }) {
     const [usuario, setUsuario] = useState("");
+    const [correo, setCorreo] = useState(""); 
     const [contrasena, setContrasena] = useState("");
     const [verPassword, setVerPassword] = useState(false);
     const [error, setError] = useState("");
@@ -18,7 +19,7 @@ export default function LoginScreen({ navigation }) {
     const validarEmail = (email) =>
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-    const manejarLogin = () => {
+    const manejarSignUp = () => {
         setError("");
 
         if (!usuario.trim() || !contrasena.trim()) {
@@ -52,15 +53,26 @@ export default function LoginScreen({ navigation }) {
                 </View>
 
                 <Text style={styles.titulo}>
-                    Welcome to ColorsPin
+                    Sign Up for ColorsPin
                 </Text>
 
                 <Text style={styles.subtitulo}>
-                    Find new ideas to try
+                    Take a picture
                 </Text>
             </View>
 
             <View style={styles.form}>
+
+                <Text style={styles.label}>Nombre de usuario</Text>
+
+                <TextInput
+                    style={styles.input}
+                    placeholder="Nombre"
+                    placeholderTextColor="#9aa0a6"
+                    autoCapitalize="none"
+                    value={usuario}
+                    onChangeText={setUsuario}
+                />
 
                 <Text style={styles.label}>Email</Text>
 
@@ -70,8 +82,8 @@ export default function LoginScreen({ navigation }) {
                     placeholderTextColor="#9aa0a6"
                     autoCapitalize="none"
                     keyboardType="email-address"
-                    value={usuario}
-                    onChangeText={setUsuario}
+                    value={correo}
+                    onChangeText={setCorreo}
                 />
 
                 <Text style={styles.label}>Password</Text>
@@ -111,25 +123,13 @@ export default function LoginScreen({ navigation }) {
 
                 <TouchableOpacity
                     style={styles.botonLogin}
-                    onPress={manejarLogin}
+                    onPress={manejarSignUp}
                 >
                     <Text style={styles.botonLoginTexto}>
-                        Log in
+                        Sign Up
                     </Text>
                 </TouchableOpacity>
 
-            </View>
-
-            <View style={styles.footer}>
-                <Text style={styles.footerTexto}>
-                    Not a member yet?{" "}
-                </Text>
-
-                <TouchableOpacity onPress={() => navigation.navigate('signUp')}>
-                    <Text style={styles.footerLink}>
-                        Register now
-                    </Text>
-                </TouchableOpacity>
             </View>
 
         </SafeAreaView>

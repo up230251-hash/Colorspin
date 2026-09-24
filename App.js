@@ -1,18 +1,54 @@
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'; 
 import { Ionicons } from '@expo/vector-icons';
 
 import { View, TouchableOpacity, StyleSheet, Image } from "react-native";
 
-import inicioScreen from "./screens/inicioScreen";
-import loginScreen from "./screens/loginScreen";
-import perfilScreen from "./screens/perfilScreen";
+import InicioScreen from "./screens/inicioScreen";
+import LoginScreen from "./screens/loginScreen";
+import PerfilScreen from "./screens/perfilScreen";
 import SpinScreen from "./screens/SpinScreen";
+import DetalleScreen from "./screens/detalleScreen"
+import SignUpScreen from "./screens/signUpScreen";
 
 const Tab = createBottomTabNavigator(); 
-//const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator();
 
+
+function TabNavigator() {
+  return(
+    <Tab.Navigator
+        screenOptions={({ route }) => ({
+          headerShown: false,
+          tabBarShowLabel: false, // oculta los nombres 
+          tabBarActiveTintColor: '#8896AC',
+          tabBarInactiveTintColor: 'gray',
+          tabBarStyle: styles.tabBar,
+          tabBarIcon: ({ color, size, focused }) => {
+            let iconName;
+            if (route.name === 'inicio') {
+              iconName = focused ? 'home' : 'home-outline';
+            } else if (route.name === 'perfil') {
+              iconName = focused ? 'person-circle' : 'person-circle-outline';
+            }
+            return <Ionicons name={iconName} color={color} size={size} />;
+          },
+        })}
+      >
+        <Tab.Screen name='inicio' component ={InicioScreen}></Tab.Screen>
+        <Tab.Screen
+          name="spin"
+          component={SpinScreen}
+          options={{
+            tabBarButton: (props) => <SpinTabButton {...props} />,
+          }}
+        />
+        <Tab.Screen name='perfil' component ={PerfilScreen}></Tab.Screen>
+
+      </Tab.Navigator>
+  );
+}
 
 // función para personalizar el botón y usar imagenes propias
 function SpinTabButton({ onPress }) {
@@ -34,35 +70,13 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          headerShown: false,
-          tabBarShowLabel: false, // oculta los nombres 
-          tabBarActiveTintColor: '#007AFF',
-          tabBarInactiveTintColor: 'gray',
-          tabBarStyle: styles.tabBar,
-          tabBarIcon: ({ color, size, focused }) => {
-            let iconName;
-            if (route.name === 'inicio') {
-              iconName = focused ? 'home' : 'home-outline';
-            } else if (route.name === 'perfil') {
-              iconName = focused ? 'person-circle' : 'person-circle-outline';
-            }
-            return <Ionicons name={iconName} color={color} size={size} />;
-          },
-        })}
-      >
-        <Tab.Screen name='inicio' component ={inicioScreen}></Tab.Screen>
-        <Tab.Screen
-          name="spin"
-          component={SpinScreen}
-          options={{
-            tabBarButton: (props) => <SpinTabButton {...props} />,
-          }}
-        />
-        <Tab.Screen name='perfil' component ={perfilScreen}></Tab.Screen>
-        {/*<Tab.Screen name='login' component ={loginScreen}></Tab.Screen>*/}
-      </Tab.Navigator>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        
+        <Stack.Screen name="MainTabs" component={TabNavigator} />
+        <Stack.Screen name='detalle' component={DetalleScreen} />
+        <Stack.Screen name='login' component={LoginScreen} />
+        <Stack.Screen name='signUp' component={SignUpScreen} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }
@@ -72,6 +86,7 @@ const styles = StyleSheet.create({
     height: 85,
     borderTopWidth: 0,
     elevation: 10,
+    backgroundColor: '#141C30'
   },
   spinWrapper: {
     top: -25, // es lo que hace que sobresalga el boton de spin
@@ -82,7 +97,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#007AFF',
+    backgroundColor: '#66F1C2',
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
