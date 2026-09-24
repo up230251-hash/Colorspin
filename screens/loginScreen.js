@@ -273,23 +273,6 @@ const styles = StyleSheet.create({
         color: "#9ca3af",
     },
 
-    botonGoogle: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 10,
-        borderWidth: 1,
-        borderColor: "#e5e7eb",
-        borderRadius: 25,
-        paddingVertical: 14,
-        backgroundColor: "#fff",
-    },
-
-    botonGoogleTexto: {
-        fontSize: 14,
-        fontWeight: "600",
-        color: "#374151",
-    },
 
     footer: {
         flexDirection: "row",
@@ -307,6 +290,7 @@ const styles = StyleSheet.create({
         fontSize: 13,
         color: ROJO,
         fontWeight: "700",
+        paddingBottom: 50
     },
 
 });

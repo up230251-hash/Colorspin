@@ -114,13 +114,19 @@ export default function perfilScreen({ navigation }) {
             <TouchableOpacity
               key={item.id}
               style={styles.tablero}
-              onPress={() => Alert.alert(item.nombre, "Tablero seleccionado")}
+              onPress={() => navigation.navigate('detalle')}
             >
               <Image source={{ uri: item.imagen }} style={styles.tableroImagen} />
               <Text style={styles.tableroNombre}>{item.nombre}</Text>
               <Text style={styles.tableroPines}>{item.pines}</Text>
             </TouchableOpacity>
           ))}
+
+          <TouchableOpacity onPress={() => navigation.navigate('login')}>
+              <Text>
+                  Login
+              </Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -19,6 +19,14 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Permitir que la app use la cámara para tomar fotos"
+        }
+      ]
+    ]
   }
 }
