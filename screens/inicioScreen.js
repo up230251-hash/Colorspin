@@ -26,7 +26,7 @@ export default function inicioScreen({ navigation }) {
   const renderFoto = ({ item }) => (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => navigation.navigate('DetalleFoto', { idFoto: item.idFoto })}
+      onPress={() => navigation.navigate('detalle')}
     >
       <Image source={{ uri: item.url }} style={styles.imagen} resizeMode="cover" />
     </TouchableOpacity>
