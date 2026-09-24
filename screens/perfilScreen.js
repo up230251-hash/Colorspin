@@ -136,11 +136,10 @@ export default function perfilScreen({ navigation }) {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#0B1220",
   },
   header: {
     flexDirection: "row",
@@ -158,16 +157,16 @@ const styles = StyleSheet.create({
     height: 84,
     borderRadius: 42,
     marginBottom: 12,
-    backgroundColor: "#eee",
+    backgroundColor: "#141C30",
   },
   nombre: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#111827",
+    color: "#F8FAFC",
   },
   usuario: {
     fontSize: 13,
-    color: "#6b7280",
+    color: "#8896AC",
     marginTop: 2,
   },
   stats: {
@@ -177,21 +176,21 @@ const styles = StyleSheet.create({
   },
   statsTexto: {
     fontSize: 13,
-    color: "#6b7280",
+    color: "#8896AC",
   },
   statsNumero: {
     fontWeight: "700",
-    color: "#111827",
+    color: "#F8FAFC",
   },
   statsSeparador: {
     marginHorizontal: 8,
-    color: "#9ca3af",
+    color: "#8896AC",
   },
   tabs: {
     flexDirection: "row",
     justifyContent: "center",
     borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    borderBottomColor: "#233047",
   },
   tab: {
     alignItems: "center",
@@ -200,17 +199,17 @@ const styles = StyleSheet.create({
   },
   tabTexto: {
     fontSize: 14,
-    color: "#9ca3af",
+    color: "#8896AC",
     fontWeight: "600",
   },
   tabTextoActivo: {
-    color: "#111827",
+    color: "#F8FAFC",
   },
   lineaActiva: {
     width: 32,
     height: 3,
     borderRadius: 3,
-    backgroundColor: "#111827",
+    backgroundColor: "#F8FAFC",
     marginTop: 6,
   },
   grid: {
@@ -229,17 +228,17 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 120,
     borderRadius: 12,
-    backgroundColor: "#eee",
+    backgroundColor: "#141C30",
   },
   tableroNombre: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#111827",
+    color: "#F8FAFC",
     marginTop: 8,
   },
   tableroPines: {
     fontSize: 12,
-    color: "#6b7280",
+    color: "#8896AC",
     marginTop: 2,
   },
 });

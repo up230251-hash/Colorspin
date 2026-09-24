@@ -12,17 +12,18 @@ export default function inicioScreen ({ navigation }) {
     );
 }
 
-const styles =  StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#fff'
+        backgroundColor: '#0B1220'
     },
 
     titulo: {
         fontSize: 24,
         marginTop: 20,
+        color: '#F8FAFC',
     },
     
 });
