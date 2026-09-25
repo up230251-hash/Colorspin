@@ -136,7 +136,7 @@ export default function perfilScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0B1220",
+    backgroundColor: "#fff",
   },
   header: {
     flexDirection: "row",
@@ -154,17 +154,17 @@ const styles = StyleSheet.create({
     height: 84,
     borderRadius: 42,
     marginBottom: 12,
-    backgroundColor: "#141C30",
+    backgroundColor: "#eee",
     marginVertical: 20
   },
   nombre: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#F8FAFC",
+    color: "#111827",
   },
   usuario: {
     fontSize: 13,
-    color: "#8896AC",
+    color: "#6b7280",
     marginTop: 2,
   },
   stats: {
@@ -174,21 +174,21 @@ const styles = StyleSheet.create({
   },
   statsTexto: {
     fontSize: 13,
-    color: "#8896AC",
+    color: "#6b7280",
   },
   statsNumero: {
     fontWeight: "700",
-    color: "#F8FAFC",
+    color: "#111827",
   },
   statsSeparador: {
     marginHorizontal: 8,
-    color: "#8896AC",
+    color: "#9ca3af",
   },
   tabs: {
     flexDirection: "row",
     justifyContent: "center",
     borderBottomWidth: 1,
-    borderBottomColor: "#233047",
+    borderBottomColor: "#f0f0f0",
   },
   tab: {
     alignItems: "center",
@@ -197,17 +197,17 @@ const styles = StyleSheet.create({
   },
   tabTexto: {
     fontSize: 14,
-    color: "#8896AC",
+    color: "#9ca3af",
     fontWeight: "600",
   },
   tabTextoActivo: {
-    color: "#F8FAFC",
+    color: "#111827",
   },
   lineaActiva: {
     width: 32,
     height: 3,
     borderRadius: 3,
-    backgroundColor: "#F8FAFC",
+    backgroundColor: "#111827",
     marginTop: 6,
   },
   grid: {
@@ -226,17 +226,17 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 120,
     borderRadius: 12,
-    backgroundColor: "#141C30",
+    backgroundColor: "#eee",
   },
   tableroNombre: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#F8FAFC",
+    color: "#111827",
     marginTop: 8,
   },
   tableroPines: {
     fontSize: 12,
-    color: "#8896AC",
+    color: "#6b7280",
     marginTop: 2,
   },
 });

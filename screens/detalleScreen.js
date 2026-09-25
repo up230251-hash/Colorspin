@@ -92,11 +92,11 @@ export default function DetalleScreen({ route }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0B1220', paddingHorizontal: 12 },
-  titulo: { fontSize: 24, fontWeight: 'bold', marginVertical: 16, color: '#F8FAFC' },
+  container: { flex: 1, backgroundColor: '#fff', paddingHorizontal: 12 },
+  titulo: { fontSize: 24, fontWeight: 'bold', marginVertical: 16 },
   list: { paddingBottom: 110 },
   pin: { flex: 1, aspectRatio: 1, margin: 4, borderRadius: 12 },
-  empty: { textAlign: 'center', color: '#8896AC', marginTop: 40 },
+  empty: { textAlign: 'center', color: 'gray', marginTop: 40 },
   cameraButton: {
     position: 'absolute',
     bottom: 30,
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     width: 62,
     height: 62,
     borderRadius: 31,
-    backgroundColor: '#66F1C2',
+    backgroundColor: '#007AFF',
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 6,
@@ -125,8 +125,8 @@ const styles = StyleSheet.create({
     width: 74,
     height: 74,
     borderRadius: 37,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#fff',
     borderWidth: 5,
-    borderColor: '#233047',
+    borderColor: '#ccc',
   },
 });

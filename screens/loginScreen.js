@@ -135,13 +135,14 @@ export default function LoginScreen({ navigation }) {
         </SafeAreaView>
     );
 }
-const ACENTO = "#66F1C2";
+
+const ROJO = "#E1174A";
 
 const styles = StyleSheet.create({
 
     container: {
         flex: 1,
-        backgroundColor: "#0B1220",
+        backgroundColor: "#fff",
         paddingHorizontal: 28,
     },
 
@@ -155,14 +156,14 @@ const styles = StyleSheet.create({
         width: 45,
         height: 45,
         borderRadius: 23,
-        backgroundColor: ACENTO,
+        backgroundColor: ROJO,
         alignItems: "center",
         justifyContent: "center",
         marginBottom: 16,
     },
 
     logoLetra: {
-        color: "#0B1220",
+        color: "#fff",
         fontWeight: "700",
         fontSize: 20,
     },
@@ -170,13 +171,13 @@ const styles = StyleSheet.create({
     titulo: {
         fontSize: 21,
         fontWeight: "700",
-        color: "#F8FAFC",
+        color: "#111827",
         textAlign: "center",
     },
 
     subtitulo: {
         fontSize: 13,
-        color: "#8896AC",
+        color: "#6b7280",
         marginTop: 6,
     },
 
@@ -187,20 +188,20 @@ const styles = StyleSheet.create({
 
     label: {
         fontSize: 13,
-        color: "#8896AC",
+        color: "#374151",
         marginBottom: 8,
         marginTop: 18,
     },
 
     input: {
         borderWidth: 1,
-        borderColor: "#233047",
+        borderColor: "#e5e7eb",
         borderRadius: 25,
         paddingHorizontal: 16,
         paddingVertical: 13,
         fontSize: 14,
-        color: "#F8FAFC",
-        backgroundColor: "#141C30",
+        color: "#111827",
+        backgroundColor: "#fff",
     },
 
     passwordWrapper: {
@@ -208,10 +209,10 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "space-between",
         borderWidth: 1,
-        borderColor: "#233047",
+        borderColor: "#e5e7eb",
         borderRadius: 25,
         paddingHorizontal: 16,
-        backgroundColor: "#141C30",
+        backgroundColor: "#fff",
         marginBottom: 2,
     },
 
@@ -219,7 +220,7 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingVertical: 13,
         fontSize: 14,
-        color: "#F8FAFC",
+        color: "#111827",
     },
 
     forgotWrapper: {
@@ -228,7 +229,7 @@ const styles = StyleSheet.create({
     },
 
     forgotTexto: {
-        color: ACENTO,
+        color: ROJO,
         fontSize: 12,
         fontWeight: "600",
     },
@@ -241,7 +242,7 @@ const styles = StyleSheet.create({
     },
 
     botonLogin: {
-        backgroundColor: ACENTO,
+        backgroundColor: ROJO,
         borderRadius: 25,
         paddingVertical: 15,
         alignItems: "center",
@@ -249,7 +250,7 @@ const styles = StyleSheet.create({
     },
 
     botonLoginTexto: {
-        color: "#0B1220",
+        color: "#fff",
         fontWeight: "700",
         fontSize: 15,
     },
@@ -263,13 +264,13 @@ const styles = StyleSheet.create({
     linea: {
         flex: 1,
         height: 1,
-        backgroundColor: "#233047",
+        backgroundColor: "#e5e7eb",
     },
 
     divisorTexto: {
         marginHorizontal: 14,
         fontSize: 11,
-        color: "#8896AC",
+        color: "#9ca3af",
     },
 
 
@@ -282,12 +283,12 @@ const styles = StyleSheet.create({
 
     footerTexto: {
         fontSize: 13,
-        color: "#8896AC",
+        color: "#6b7280",
     },
 
     footerLink: {
         fontSize: 13,
-        color: ACENTO,
+        color: ROJO,
         fontWeight: "700",
         paddingBottom: 50
     },
