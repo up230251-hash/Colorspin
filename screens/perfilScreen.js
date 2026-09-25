@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import {
+  ActivityIndicator,
   View,
   Text,
   Image,
@@ -9,40 +10,55 @@ import {
   Alert,
 } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../context/AuthContext";
+import { obtenerTablerosUsuario } from "../api/tableros";
 
-const TABLEROS_CREADOS = [
-  {
-    id: "c1",
-    nombre: "Warm Interior Mood",
-    pines: "142 Pins",
-    imagen: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0",
-  },
-  {
-    id: "c2",
-    nombre: "Editorial Fashion",
-    pines: "56 Pins",
-    imagen: "https://images.unsplash.com/photo-1483985988355-763728e1935b",
-  },
-  {
-    id: "c3",
-    nombre: "Art & Ceramics",
-    pines: "98 Pins",
-    imagen: "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61",
-  },
-  {
-    id: "c4",
-    nombre: "Matcha & Mornings",
-    pines: "45 Pins",
-    imagen: "https://images.unsplash.com/photo-1515823064-d6e0c04616a7",
-  },
-];
+function mostrarFecha(fecha) {
+  if (!fecha) return "";
+  const [anio, mes, dia] = String(fecha).slice(0, 10).split("-");
+  return dia && mes && anio ? `${dia}/${mes}/${anio}` : "";
+}
 
 export default function PerfilScreen({ navigation }) {
-  const { logout } = useAuth();
-  // Usamos directamente la lista de creados
-  const tableros = TABLEROS_CREADOS;
+  const { usuario, logout } = useAuth();
+  const [tableros, setTableros] = useState([]);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState("");
+  const [intentoCarga, setIntentoCarga] = useState(0);
+
+  useFocusEffect(
+    useCallback(() => {
+      let pantallaActiva = true;
+
+      const cargarTableros = async () => {
+        if (!usuario?.idUsuario) {
+          setError("No se encontró el identificador del usuario. Vuelve a iniciar sesión.");
+          setCargando(false);
+          return;
+        }
+
+        setCargando(true);
+        setError("");
+        try {
+          const datos = await obtenerTablerosUsuario(usuario.idUsuario);
+          if (pantallaActiva) setTableros(datos);
+        } catch (e) {
+          if (pantallaActiva) {
+            setError(e.response?.data?.mensaje ?? "No se pudieron cargar tus tableros.");
+          }
+        } finally {
+          if (pantallaActiva) setCargando(false);
+        }
+      };
+
+      cargarTableros();
+      return () => {
+        pantallaActiva = false;
+      };
+    }, [usuario?.idUsuario, intentoCarga])
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -58,43 +74,53 @@ export default function PerfilScreen({ navigation }) {
 
         <View style={styles.perfilInfo}>
           <Image
-            source={{
-              uri: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300",
-            }}
+            source={{ uri: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300" }}
             style={styles.avatar}
           />
-          <Text style={styles.nombre}>Elena Rostova</Text>
+          <Text style={styles.nombre}>{usuario?.nombre ?? "Mi perfil"}</Text>
+          {!!usuario?.correo && <Text style={styles.correo}>{usuario.correo}</Text>}
         </View>
 
-        {/* Sección de título o indicador estático en lugar de pestañas */}
         <View style={styles.tabs}>
           <View style={styles.tab}>
-            <Text style={[styles.tabTexto, styles.tabTextoActivo]}>
-              Created
-            </Text>
+            <Text style={[styles.tabTexto, styles.tabTextoActivo]}>Mis tableros</Text>
             <View style={styles.lineaActiva} />
           </View>
         </View>
 
-        <View style={styles.grid}>
-          {tableros.map((item) => (
-            <TouchableOpacity
-              key={item.id}
-              style={styles.tablero}
-              onPress={() => navigation.navigate('detalle')}
-            >
-              <Image source={{ uri: item.imagen }} style={styles.tableroImagen} />
-              <Text style={styles.tableroNombre}>{item.nombre}</Text>
-              <Text style={styles.tableroPines}>{item.pines}</Text>
+        {cargando ? (
+          <ActivityIndicator style={styles.estado} size="large" color="#66F1C2" />
+        ) : error ? (
+          <View style={styles.estado}>
+            <Text style={styles.mensajeEstado}>{error}</Text>
+            <TouchableOpacity onPress={() => setIntentoCarga((intento) => intento + 1)}>
+              <Text style={styles.reintentar}>Volver a cargar</Text>
             </TouchableOpacity>
-          ))}
+          </View>
+        ) : tableros.length === 0 ? (
+          <Text style={styles.mensajeEstado}>Aún no tienes tableros. Crea uno desde la ruleta.</Text>
+        ) : (
+          <View style={styles.grid}>
+            {tableros.map((item) => (
+              <TouchableOpacity
+                key={String(item.idTablero)}
+                style={styles.tablero}
+                onPress={() => navigation.navigate('detalle', { board: item })}
+              >
+                <Image
+                  source={{ uri: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=600" }}
+                  style={styles.tableroImagen}
+                />
+                <Text style={styles.tableroNombre}>{item.nombre}</Text>
+                <Text style={styles.tableroFecha}>{mostrarFecha(item.fecha)}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
 
-          <TouchableOpacity onPress={logout}>
-            <Text style={styles.logoutTexto}>
-              Cerrar sesión
-            </Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+          <Text style={styles.logoutTexto}>Cerrar sesión</Text>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
@@ -128,27 +154,10 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#F8FAFC",
   },
-  usuario: {
+  correo: {
     fontSize: 13,
     color: "#8896AC",
-    marginTop: 2,
-  },
-  stats: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 10,
-  },
-  statsTexto: {
-    fontSize: 13,
-    color: "#8896AC",
-  },
-  statsNumero: {
-    fontWeight: "700",
-    color: "#F8FAFC",
-  },
-  statsSeparador: {
-    marginHorizontal: 8,
-    color: "#8896AC",
+    marginTop: 4,
   },
   tabs: {
     flexDirection: "row",
@@ -200,15 +209,35 @@ const styles = StyleSheet.create({
     color: "#F8FAFC",
     marginTop: 8,
   },
-  tableroPines: {
+  tableroFecha: {
     fontSize: 12,
     color: "#8896AC",
     marginTop: 2,
+  },
+  estado: {
+    alignItems: "center",
+    marginTop: 40,
+    marginHorizontal: 24,
+  },
+  mensajeEstado: {
+    color: "#8896AC",
+    textAlign: "center",
+    marginTop: 32,
+    marginHorizontal: 24,
+  },
+  reintentar: {
+    color: "#66F1C2",
+    fontWeight: "700",
+    marginTop: 14,
+  },
+  logoutButton: {
+    alignSelf: "center",
+    padding: 14,
+    marginBottom: 24,
   },
   logoutTexto: {
     fontSize: 13,
     fontWeight: "600",
     color: "#dc2626",
-    marginTop: 8,
   },
 });

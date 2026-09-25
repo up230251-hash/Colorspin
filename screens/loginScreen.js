@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from "@expo/vector-icons";
+import { iniciarSesion } from "../api/auth";
 import { useAuth } from "../context/AuthContext";
 
 export default function LoginScreen({ navigation }) {
@@ -20,30 +21,16 @@ export default function LoginScreen({ navigation }) {
     const validarEmail = (email) =>
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-    const manejarLogin = () => {
-        setError("");
-
-        if (!usuario.trim() || !contrasena.trim()) {
-            setError("Completa tu email y contraseña.");
-            return;
+    const manejarLogin = async () => {
+        try {
+            const respuesta = await iniciarSesion(usuario.trim(), contrasena);
+            login(respuesta.data.usuario);
+        } catch (error) {
+            setError(
+                error.response?.data?.mensaje ??
+                "No se pudo conectar con el servidor."
+            );
         }
-
-        if (!validarEmail(usuario)) {
-            setError("Ingresa un email válido.");
-            return;
-        }
-
-        if (contrasena.length < 6) {
-            setError("La contraseña debe tener al menos 6 caracteres.");
-            return;
-        }
-
-        // Por ahora solo simulamos un login exitoso guardándolo en el AuthContext.
-        // Después aquí se conectará el backend de tu compañero: primero haces el
-        // fetch/axios al endpoint de login, y si responde bien, recién ahí llamas a login(...).
-        // En cuanto login() se ejecuta, el RootNavigator en App.js detecta que ya hay
-        // "usuario" y cambia automáticamente del AuthNavigator al AppNavigator.
-        login({ usuario: usuario });
     };
 
     return (

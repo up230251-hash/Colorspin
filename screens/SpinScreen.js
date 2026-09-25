@@ -1,17 +1,23 @@
 import { StatusBar } from 'expo-status-bar';
 import { useRef, useState } from 'react';
 import {
+  ActivityIndicator,
   Animated,
+  Alert,
   Easing,
+  Modal,
   Platform,
   Pressable,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle, Path } from 'react-native-svg';
+import { useAuth } from '../context/AuthContext';
+import { crearTablero } from '../api/tableros';
  
 // ---- Paleta de la ruleta: SIN TOCAR ----
 const COLORS = [
@@ -59,10 +65,14 @@ function segmentPath(index) {
 }
  
 export default function SpinScreen({ navigation }) {
+  const { usuario } = useAuth();
   const rotation = useRef(new Animated.Value(0)).current;
   const currentRotation = useRef(0);
   const [isSpinning, setIsSpinning] = useState(false);
   const [selectedColor, setSelectedColor] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [nombreTablero, setNombreTablero] = useState('');
+  const [guardando, setGuardando] = useState(false);
  
   const spin = () => {
     if (isSpinning) return;
@@ -91,7 +101,42 @@ export default function SpinScreen({ navigation }) {
  
   const handleSave = () => {
     if (!selectedColor) return;
-    navigation.navigate('perfil', { colorTablero: selectedColor });
+    setNombreTablero('');
+    setModalVisible(true);
+  };
+
+  const guardarTablero = async () => {
+    const nombre = nombreTablero.trim();
+    if (!nombre) {
+      Alert.alert('Falta el nombre', 'Escribe un nombre para el tablero.');
+      return;
+    }
+
+    if (!usuario?.idUsuario) {
+      Alert.alert('Sesión no válida', 'Cierra sesión e inicia sesión nuevamente.');
+      return;
+    }
+
+    const hoy = new Date();
+    const fecha = [
+      hoy.getFullYear(),
+      String(hoy.getMonth() + 1).padStart(2, '0'),
+      String(hoy.getDate()).padStart(2, '0'),
+    ].join('-');
+
+    setGuardando(true);
+    try {
+      await crearTablero(usuario.idUsuario, nombre, fecha);
+      setModalVisible(false);
+      navigation.navigate('perfil');
+    } catch (error) {
+      Alert.alert(
+        'No se pudo crear el tablero',
+        error.response?.data?.mensaje ?? 'Revisa la conexión con el servidor e inténtalo de nuevo.'
+      );
+    } finally {
+      setGuardando(false);
+    }
   };
  
   const wheelRotation = rotation.interpolate({
@@ -159,6 +204,53 @@ export default function SpinScreen({ navigation }) {
       >
         <Text style={styles.saveText}>Crear tablero</Text>
       </TouchableOpacity>
+
+      <Modal
+        visible={modalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => !guardando && setModalVisible(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>Nuevo tablero</Text>
+            <Text style={styles.modalDescription}>Ponle un nombre a tu tablero.</Text>
+            <TextInput
+              accessibilityLabel="Nombre del tablero"
+              value={nombreTablero}
+              onChangeText={setNombreTablero}
+              placeholder="Ej. Mis colores favoritos"
+              placeholderTextColor={THEME.textMuted}
+              style={styles.nameInput}
+              maxLength={80}
+              autoFocus
+              editable={!guardando}
+              returnKeyType="done"
+              onSubmitEditing={guardarTablero}
+            />
+            <View style={styles.modalActions}>
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={() => setModalVisible(false)}
+                disabled={guardando}
+              >
+                <Text style={styles.cancelText}>Cancelar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.createButton, guardando && styles.saveButtonDisabled]}
+                onPress={guardarTablero}
+                disabled={guardando}
+              >
+                {guardando ? (
+                  <ActivityIndicator color={THEME.accentTextOn} />
+                ) : (
+                  <Text style={styles.createText}>Guardar</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -255,5 +347,66 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '800',
     letterSpacing: 0.5,
+  },
+  modalBackdrop: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 24,
+    backgroundColor: 'rgba(0, 0, 0, 0.65)',
+  },
+  modalCard: {
+    backgroundColor: THEME.surface,
+    borderColor: THEME.border,
+    borderWidth: 1,
+    borderRadius: 20,
+    padding: 22,
+  },
+  modalTitle: {
+    color: THEME.textPrimary,
+    fontSize: 20,
+    fontWeight: '800',
+  },
+  modalDescription: {
+    color: THEME.textMuted,
+    fontSize: 14,
+    marginTop: 6,
+    marginBottom: 16,
+  },
+  nameInput: {
+    color: THEME.textPrimary,
+    backgroundColor: THEME.bg,
+    borderWidth: 1,
+    borderColor: THEME.border,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 15,
+  },
+  modalActions: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    gap: 12,
+    marginTop: 18,
+  },
+  cancelButton: {
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+  },
+  cancelText: {
+    color: THEME.textMuted,
+    fontWeight: '700',
+  },
+  createButton: {
+    minWidth: 96,
+    alignItems: 'center',
+    backgroundColor: THEME.accent,
+    borderRadius: 12,
+    paddingHorizontal: 18,
+    paddingVertical: 12,
+  },
+  createText: {
+    color: THEME.accentTextOn,
+    fontWeight: '800',
   },
 });
