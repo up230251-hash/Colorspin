@@ -8,8 +8,10 @@ import {
 } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from "@expo/vector-icons";
+import { useAuth } from "../context/AuthContext";
 
 export default function LoginScreen({ navigation }) {
+    const { login } = useAuth();
     const [usuario, setUsuario] = useState("");
     const [contrasena, setContrasena] = useState("");
     const [verPassword, setVerPassword] = useState(false);
@@ -36,11 +38,12 @@ export default function LoginScreen({ navigation }) {
             return;
         }
 
-        // Por ahora solo navegamos al perfil.
-        // Después aquí se conectará el backend de tu compañero.
-        navigation.navigate("Perfil", {
-            usuario: usuario,
-        });
+        // Por ahora solo simulamos un login exitoso guardándolo en el AuthContext.
+        // Después aquí se conectará el backend de tu compañero: primero haces el
+        // fetch/axios al endpoint de login, y si responde bien, recién ahí llamas a login(...).
+        // En cuanto login() se ejecuta, el RootNavigator en App.js detecta que ya hay
+        // "usuario" y cambia automáticamente del AuthNavigator al AppNavigator.
+        login({ usuario: usuario });
     };
 
     return (

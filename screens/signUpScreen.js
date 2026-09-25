@@ -8,8 +8,10 @@ import {
 } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from "@expo/vector-icons";
+import { useAuth } from "../context/AuthContext";
 
 export default function SignUpScreen({ navigation }) {
+    const { login } = useAuth();
     const [usuario, setUsuario] = useState("");
     const [correo, setCorreo] = useState(""); 
     const [contrasena, setContrasena] = useState("");
@@ -37,11 +39,8 @@ export default function SignUpScreen({ navigation }) {
             return;
         }
 
-        // Por ahora solo navegamos al perfil.
-        // Después aquí se conectará el backend de tu compañero.
-        navigation.navigate("Perfil", {
-            usuario: usuario,
-        });
+        
+        login({ usuario: usuario });
     };
 
     return (

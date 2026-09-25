@@ -1,6 +1,6 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'; 
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 
 import { View, TouchableOpacity, StyleSheet, Image } from "react-native";
@@ -11,17 +11,18 @@ import PerfilScreen from "./screens/perfilScreen";
 import SpinScreen from "./screens/SpinScreen";
 import DetalleScreen from "./screens/detalleScreen"
 import SignUpScreen from "./screens/signUpScreen";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 
-const Tab = createBottomTabNavigator(); 
-const Stack = createNativeStackNavigator();
-
+const Tab = createBottomTabNavigator();
+const AppStack = createNativeStackNavigator();
+const AuthStack = createNativeStackNavigator();
 
 function TabNavigator() {
   return(
     <Tab.Navigator
         screenOptions={({ route }) => ({
           headerShown: false,
-          tabBarShowLabel: false, // oculta los nombres 
+          tabBarShowLabel: false, // oculta los nombres
           tabBarActiveTintColor: '#8896AC',
           tabBarInactiveTintColor: 'gray',
           tabBarStyle: styles.tabBar,
@@ -55,7 +56,6 @@ function SpinTabButton({ onPress }) {
   return (
     <TouchableOpacity style={styles.spinWrapper} onPress={onPress} activeOpacity={0.8}>
       <View style={styles.spinCircle}>
-        {/*se planea usar un blob en esta parte para el logo de dante */}
         <Image
           source={{ uri: 'https://4.bp.blogspot.com/-FuGUtTnVSTw/WPxFpHjTJCI/AAAAAAAAgEs/ZUNvdWjlRvkNRFRIe0UnMRhkA_RxVaFUACLcB/s1600/paleta_rueda_del_color.png' }}
           style={styles.spinImage}
@@ -66,18 +66,46 @@ function SpinTabButton({ onPress }) {
   );
 }
 
-export default function App() {
+// Stack de autenticación: SOLO existe login y signUp.
+// Mientras no haya usuario logueado, esto es lo único que el Stack conoce,
+// así que no hay forma de "navegar de vuelta" a las tabs saltándose el login.
+function AuthNavigator() {
+  return (
+    <AuthStack.Navigator screenOptions={{ headerShown: false }}>
+      <AuthStack.Screen name="login" component={LoginScreen} />
+      <AuthStack.Screen name="signUp" component={SignUpScreen} />
+    </AuthStack.Navigator>
+  );
+}
+
+// Stack de la app ya autenticada: SOLO existe una vez que hay usuario logueado.
+function AppNavigator() {
+  return (
+    <AppStack.Navigator screenOptions={{ headerShown: false }}>
+      <AppStack.Screen name="MainTabs" component={TabNavigator} />
+      <AppStack.Screen name="detalle" component={DetalleScreen} />
+    </AppStack.Navigator>
+  );
+}
+
+// Decide cuál de los dos stacks mostrar, según el estado del AuthContext.
+// Este switch es lo que reemplaza al "initialRouteName": ya no es una pantalla
+// inicial dentro de un stack compartido, son dos árboles de navegación distintos.
+function RootNavigator() {
+  const { usuario } = useAuth();
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        
-        <Stack.Screen name="MainTabs" component={TabNavigator} />
-        <Stack.Screen name='detalle' component={DetalleScreen} />
-        <Stack.Screen name='login' component={LoginScreen} />
-        <Stack.Screen name='signUp' component={SignUpScreen} />
-      </Stack.Navigator>
+      {usuario ? <AppNavigator /> : <AuthNavigator />}
     </NavigationContainer>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <RootNavigator />
+    </AuthProvider>
   );
 }
 
@@ -109,6 +137,6 @@ const styles = StyleSheet.create({
   spinImage: {
     width: 30,
     height: 30,
-    tintColor: '#fff', 
+    tintColor: '#fff',
   },
 });

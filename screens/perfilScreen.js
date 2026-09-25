@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from "@expo/vector-icons";
+import { useAuth } from "../context/AuthContext";
 
 const TABLEROS_CREADOS = [
   {
@@ -38,34 +39,8 @@ const TABLEROS_CREADOS = [
   },
 ];
 
-const TABLEROS_GUARDADOS = [
-  {
-    id: "s1",
-    nombre: "Minimalist Living",
-    pines: "87 Pins",
-    imagen: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace",
-  },
-  {
-    id: "s2",
-    nombre: "Coffee Aesthetic",
-    pines: "64 Pins",
-    imagen: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085",
-  },
-  {
-    id: "s3",
-    nombre: "Fashion Ideas",
-    pines: "120 Pins",
-    imagen: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d",
-  },
-  {
-    id: "s4",
-    nombre: "Dream Bedroom",
-    pines: "72 Pins",
-    imagen: "https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a",
-  },
-];
-
 export default function PerfilScreen({ navigation }) {
+  const { logout } = useAuth();
   // Usamos directamente la lista de creados
   const tableros = TABLEROS_CREADOS;
 
@@ -114,9 +89,9 @@ export default function PerfilScreen({ navigation }) {
             </TouchableOpacity>
           ))}
 
-          <TouchableOpacity onPress={() => navigation.navigate('login')}>
-            <Text>
-              Login
+          <TouchableOpacity onPress={logout}>
+            <Text style={styles.logoutTexto}>
+              Cerrar sesión
             </Text>
           </TouchableOpacity>
         </View>
@@ -229,5 +204,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#8896AC",
     marginTop: 2,
+  },
+  logoutTexto: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#dc2626",
+    marginTop: 8,
   },
 });
