@@ -1,5 +1,6 @@
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import {
+  ActivityIndicator,
   View,
   Text,
   TouchableOpacity,
@@ -11,14 +12,60 @@ import {
 } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
+import { useAuth } from '../context/AuthContext';
+import { obtenerFotosTablero, subirFoto } from '../api/fotos';
 
 export default function DetalleScreen({ route }) {
   const board = route.params?.board;
+  const { usuario } = useAuth();
   const [pins, setPins] = useState([]);
   const [cameraOpen, setCameraOpen] = useState(false);
   const [facing, setFacing] = useState('back');
+  const [subiendo, setSubiendo] = useState(false);
+  const [cargandoFotos, setCargandoFotos] = useState(true);
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      let pantallaActiva = true;
+
+      const cargarFotos = async () => {
+        if (!board?.idTablero) {
+          setPins([]);
+          setCargandoFotos(false);
+          return;
+        }
+
+        setPins([]);
+        setCargandoFotos(true);
+        try {
+          const fotos = await obtenerFotosTablero(board.idTablero);
+          if (pantallaActiva) {
+            setPins(fotos.map((foto) => ({
+              id: String(foto.idFoto),
+              uri: foto.url,
+            })));
+          }
+        } catch (error) {
+          if (pantallaActiva) {
+            Alert.alert(
+              'No se pudieron cargar las fotos',
+              error.response?.data?.mensaje ?? 'Revisa la conexión con el servidor e inténtalo de nuevo.'
+            );
+          }
+        } finally {
+          if (pantallaActiva) setCargandoFotos(false);
+        }
+      };
+
+      cargarFotos();
+      return () => {
+        pantallaActiva = false;
+      };
+    }, [board?.idTablero])
+  );
 
   // Abrir la cámara (pide permiso si hace falta)
   const openCamera = async () => {
@@ -34,14 +81,28 @@ export default function DetalleScreen({ route }) {
 
   // Tomar la foto y agregarla como pin
   const takePicture = async () => {
-    if (!cameraRef.current) return;
+    if (!cameraRef.current || subiendo) return;
     try {
       const photo = await cameraRef.current.takePictureAsync({ quality: 0.7 });
-      setPins((prev) => [{ id: Date.now().toString(), uri: photo.uri }, ...prev]);
-      // TODO: enviar la foto al backend junto con el id del tablero
+      if (!usuario?.idUsuario || !board?.idTablero) {
+        Alert.alert('No se pudo subir la foto', 'Falta el usuario o el tablero. Vuelve a entrar al tablero desde tu perfil.');
+        return;
+      }
+
+      setSubiendo(true);
+      const respuesta = await subirFoto(photo.uri, usuario.idUsuario, board.idTablero);
+      setPins((prev) => [
+        { id: String(respuesta.data.id), uri: respuesta.data.url },
+        ...prev,
+      ]);
       setCameraOpen(false);
-    } catch (e) {
-      Alert.alert('Error', 'No se pudo tomar la foto.');
+    } catch (error) {
+      Alert.alert(
+        'No se pudo guardar la foto',
+        error.response?.data?.mensaje ?? 'Revisa la conexión con el servidor e inténtalo de nuevo.'
+      );
+    } finally {
+      setSubiendo(false);
     }
   };
 
@@ -55,9 +116,11 @@ export default function DetalleScreen({ route }) {
         numColumns={2}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => <Image source={{ uri: item.uri }} style={styles.pin} />}
-        ListEmptyComponent={
+        ListEmptyComponent={cargandoFotos ? (
+          <ActivityIndicator style={styles.loading} size="large" color="#66F1C2" />
+        ) : (
           <Text style={styles.empty}>Aún no hay pines. ¡Toma una foto con el botón de la cámara!</Text>
-        }
+        )}
       />
 
       <TouchableOpacity style={styles.cameraButton} onPress={openCamera}>
@@ -69,7 +132,11 @@ export default function DetalleScreen({ route }) {
         <View style={styles.cameraContainer}>
           <CameraView ref={cameraRef} style={StyleSheet.absoluteFill} facing={facing} />
 
-          <TouchableOpacity style={styles.closeButton} onPress={() => setCameraOpen(false)}>
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() => setCameraOpen(false)}
+            disabled={subiendo}
+          >
             <Ionicons name="close" size={30} color="#fff" />
           </TouchableOpacity>
 
@@ -81,7 +148,14 @@ export default function DetalleScreen({ route }) {
               <Ionicons name="camera-reverse" size={30} color="#fff" />
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.shutter} onPress={takePicture} />
+            <TouchableOpacity
+              style={[styles.shutter, subiendo && styles.shutterDisabled]}
+              onPress={takePicture}
+              disabled={subiendo}
+              accessibilityLabel={subiendo ? 'Subiendo foto' : 'Tomar foto'}
+            >
+              {subiendo && <ActivityIndicator color="#111827" />}
+            </TouchableOpacity>
 
             <View style={styles.flipButton} />
           </View>
@@ -112,6 +186,7 @@ const styles = StyleSheet.create({
   list: { paddingBottom: 110 },
   pin: { flex: 1, aspectRatio: 1, margin: 4, borderRadius: 12 },
   empty: { textAlign: 'center', color: 'gray', marginTop: 40 },
+  loading: { marginTop: 40 },
   
   cameraButton: {
     position: 'absolute',
@@ -148,4 +223,5 @@ const styles = StyleSheet.create({
     borderWidth: 5,
     borderColor: '#ccc',
   },
+  shutterDisabled: { opacity: 0.7 },
 });

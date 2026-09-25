@@ -1,5 +1,7 @@
 import { useState } from "react";
 import {
+    ActivityIndicator,
+    Alert,
     View,
     Text,
     TextInput,
@@ -8,28 +10,28 @@ import {
 } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from "@expo/vector-icons";
-import { useAuth } from "../context/AuthContext";
+import { registrarUsuario } from "../api/auth";
 
 export default function SignUpScreen({ navigation }) {
-    const { login } = useAuth();
     const [usuario, setUsuario] = useState("");
     const [correo, setCorreo] = useState(""); 
     const [contrasena, setContrasena] = useState("");
     const [verPassword, setVerPassword] = useState(false);
     const [error, setError] = useState("");
+    const [enviando, setEnviando] = useState(false);
 
     const validarEmail = (email) =>
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-    const manejarSignUp = () => {
+    const manejarSignUp = async () => {
         setError("");
 
-        if (!usuario.trim() || !contrasena.trim()) {
-            setError("Completa tu email y contraseña.");
+        if (!usuario.trim() || !correo.trim() || !contrasena.trim()) {
+            setError("Completa tu nombre, correo y contraseña.");
             return;
         }
 
-        if (!validarEmail(usuario)) {
+        if (!validarEmail(correo.trim())) {
             setError("Ingresa un email válido.");
             return;
         }
@@ -39,8 +41,27 @@ export default function SignUpScreen({ navigation }) {
             return;
         }
 
-        
-        login({ usuario: usuario });
+        setEnviando(true);
+        try {
+            await registrarUsuario(
+                usuario.trim(),
+                correo.trim().toLowerCase(),
+                contrasena
+            );
+
+            Alert.alert(
+                "Cuenta creada",
+                "Tu cuenta se registró correctamente. Ahora inicia sesión con tu correo y contraseña.",
+                [{ text: "Ir al login", onPress: () => navigation.navigate("login") }]
+            );
+        } catch (e) {
+            setError(
+                e.response?.data?.mensaje ??
+                "No se pudo conectar con el servidor. Revisa tu conexión e inténtalo de nuevo."
+            );
+        } finally {
+            setEnviando(false);
+        }
     };
 
     return (
@@ -121,12 +142,15 @@ export default function SignUpScreen({ navigation }) {
                 ) : null}
 
                 <TouchableOpacity
-                    style={styles.botonLogin}
+                    style={[styles.botonLogin, enviando && styles.botonDeshabilitado]}
                     onPress={manejarSignUp}
+                    disabled={enviando}
                 >
-                    <Text style={styles.botonLoginTexto}>
-                        Sign Up
-                    </Text>
+                    {enviando ? (
+                        <ActivityIndicator color="#0B1220" />
+                    ) : (
+                        <Text style={styles.botonLoginTexto}>Sign Up</Text>
+                    )}
                 </TouchableOpacity>
 
             </View>
@@ -252,6 +276,10 @@ const styles = StyleSheet.create({
         color: "#0B1220",
         fontWeight: "700",
         fontSize: 15,
+    },
+
+    botonDeshabilitado: {
+        opacity: 0.65,
     },
 
     divisorWrapper: {

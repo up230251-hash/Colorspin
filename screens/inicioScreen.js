@@ -1,35 +1,86 @@
-import { useState } from 'react';
-import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { useCallback, useState } from 'react';
+import {
+  ActivityIndicator,
+  View,
+  Text,
+  FlatList,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import { obtenerFotosAleatorias } from '../api/fotos';
 
-// Esto vendrá de tu API con JOIN foto + tablero (fecha pertenece a tablero, no a foto)
-// Estructura esperada por item: { idFoto, idTablero, idUsuario, url, fecha }
-// donde `fecha` = tablero.fecha del tablero al que pertenece esa foto
-const fotosMock = [
-  { idFoto: 1, idTablero: 10, idUsuario: 1, url: 'https://picsum.photos/id/10/400/500', fecha: '2026-09-20' },
-  { idFoto: 2, idTablero: 10, idUsuario: 1, url: 'https://picsum.photos/id/20/400/500', fecha: '2026-09-20' },
-  { idFoto: 3, idTablero: 11, idUsuario: 1, url: 'https://picsum.photos/id/30/400/500', fecha: '2026-09-15' },
-  { idFoto: 4, idTablero: 11, idUsuario: 1, url: 'https://picsum.photos/id/40/400/500', fecha: '2026-09-15' },
-  { idFoto: 5, idTablero: 12, idUsuario: 1, url: 'https://picsum.photos/id/50/400/500', fecha: '2026-09-01' },
-  { idFoto: 6, idTablero: 12, idUsuario: 1, url: 'https://picsum.photos/id/60/400/500', fecha: '2026-09-01' },
-];  
+function valorFecha(foto) {
+  if (foto.fecha) {
+    const fecha = new Date(foto.fecha).getTime();
+    if (Number.isFinite(fecha)) return fecha;
+  }
+  return Number(foto.idFoto);
+}
 
 export default function InicioScreen({ navigation }) {
-  const [orden, setOrden] = useState('nuevo'); 
+  const [orden, setOrden] = useState('nuevo');
+  const [fotos, setFotos] = useState([]);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState('');
+  const [intentoCarga, setIntentoCarga] = useState(0);
 
-  const fotosOrdenadas = [...fotosMock].sort((a, b) => {
-    const fechaA = new Date(a.fecha); // fecha del tablero
-    const fechaB = new Date(b.fecha);
+  useFocusEffect(
+    useCallback(() => {
+      let pantallaActiva = true;
+
+      const cargarFotos = async () => {
+        setCargando(true);
+        setError('');
+        try {
+          const datos = await obtenerFotosAleatorias();
+          if (pantallaActiva) setFotos(datos);
+        } catch (e) {
+          if (pantallaActiva) {
+            setError(e.response?.data?.mensaje ?? 'No se pudieron cargar las fotos.');
+          }
+        } finally {
+          if (pantallaActiva) setCargando(false);
+        }
+      };
+
+      cargarFotos();
+      return () => {
+        pantallaActiva = false;
+      };
+    }, [intentoCarga])
+  );
+
+  const fotosOrdenadas = [...fotos].sort((a, b) => {
+    const fechaA = valorFecha(a);
+    const fechaB = valorFecha(b);
     return orden === 'nuevo' ? fechaB - fechaA : fechaA - fechaB;
   });
 
   const renderFoto = ({ item }) => (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => navigation.navigate('detalle')}
+      onPress={() => navigation.navigate('detalle', {
+        board: { idTablero: item.idTablero, nombre: 'Tablero' },
+      })}
     >
       <Image source={{ uri: item.url }} style={styles.imagen} resizeMode="cover" />
     </TouchableOpacity>
+  );
+
+  const contenidoVacio = cargando ? (
+    <ActivityIndicator style={styles.estado} size="large" color="#66F1C2" />
+  ) : error ? (
+    <View style={styles.estado}>
+      <Text style={styles.vacio}>{error}</Text>
+      <TouchableOpacity onPress={() => setIntentoCarga((intento) => intento + 1)}>
+        <Text style={styles.reintentar}>Volver a cargar</Text>
+      </TouchableOpacity>
+    </View>
+  ) : (
+    <Text style={styles.vacio}>Aún no hay fotos</Text>
   );
 
   return (
@@ -39,7 +90,7 @@ export default function InicioScreen({ navigation }) {
           style={[styles.filtroBtn, orden === 'nuevo' && styles.filtroActivo]}
           onPress={() => setOrden('nuevo')}
         >
-          <Ionicons name="arrow-down" size={16} color={orden === 'nuevo' ? '#333' : '#333'} />
+          <Ionicons name="arrow-down" size={16} color="#333" />
           <Text style={[styles.filtroTexto, orden === 'nuevo' && styles.filtroTextoActivo]}>
             Más reciente
           </Text>
@@ -49,7 +100,7 @@ export default function InicioScreen({ navigation }) {
           style={[styles.filtroBtn, orden === 'viejo' && styles.filtroActivo]}
           onPress={() => setOrden('viejo')}
         >
-          <Ionicons name="arrow-up" size={16} color={orden === 'viejo' ? '#fff' : '#333'} />
+          <Ionicons name="arrow-up" size={16} color="#333" />
           <Text style={[styles.filtroTexto, orden === 'viejo' && styles.filtroTextoActivo]}>
             Más antiguo
           </Text>
@@ -58,11 +109,11 @@ export default function InicioScreen({ navigation }) {
 
       <FlatList
         data={fotosOrdenadas}
-        keyExtractor={(item) => item.idFoto.toString()}
+        keyExtractor={(item) => String(item.idFoto)}
         numColumns={2}
         renderItem={renderFoto}
         contentContainerStyle={styles.grid}
-        ListEmptyComponent={<Text style={styles.vacio}>Aún no hay fotos</Text>}
+        ListEmptyComponent={contenidoVacio}
       />
     </View>
   );
@@ -75,8 +126,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 10,
     marginBottom: 10,
-    marginVertical: 50
-    
+    marginVertical: 50,
   },
   filtroBtn: {
     flexDirection: 'row',
@@ -90,14 +140,16 @@ const styles = StyleSheet.create({
   filtroActivo: { backgroundColor: '#66F1C2' },
   filtroTexto: { fontSize: 13, color: '#333' },
   filtroTextoActivo: { color: '#333' },
-  grid: { paddingHorizontal: 8 },
+  grid: { paddingHorizontal: 8, flexGrow: 1 },
   card: {
     flex: 1,
     margin: 6,
     borderRadius: 12,
     overflow: 'hidden',
-    backgroundColor: '#eee',
+    backgroundColor: '#141C30',
   },
   imagen: { width: '100%', height: 180 },
-  vacio: { textAlign: 'center', marginTop: 40, color: '#999' },
+  estado: { alignSelf: 'center', marginTop: 40, marginHorizontal: 24 },
+  vacio: { textAlign: 'center', marginTop: 40, color: '#8896AC' },
+  reintentar: { textAlign: 'center', color: '#66F1C2', fontWeight: '700', marginTop: 14 },
 });
