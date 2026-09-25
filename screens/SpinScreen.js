@@ -5,12 +5,12 @@ import {
   Easing,
   Platform,
   Pressable,
-  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle, Path } from 'react-native-svg';
  
 // ---- Paleta de la ruleta: SIN TOCAR ----
@@ -176,7 +176,6 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '800',
     letterSpacing: 0.5,
-    marginVertical: 15
   },
   subtitle: { color: THEME.textMuted, fontSize: 15, marginTop: 6 },
   gameArea: {

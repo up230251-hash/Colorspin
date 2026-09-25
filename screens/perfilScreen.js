@@ -6,9 +6,9 @@ import {
   ScrollView,
   TouchableOpacity,
   StyleSheet,
-  SafeAreaView,
   Alert,
 } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from "@expo/vector-icons";
 
 const TABLEROS_CREADOS = [
@@ -65,10 +65,9 @@ const TABLEROS_GUARDADOS = [
   },
 ];
 
-export default function perfilScreen({ navigation }) {
-  const [tab, setTab] = useState("Saved");
-
-  const tableros = tab === "Created" ? TABLEROS_CREADOS : TABLEROS_GUARDADOS;
+export default function PerfilScreen({ navigation }) {
+  // Usamos directamente la lista de creados
+  const tableros = TABLEROS_CREADOS;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -90,23 +89,16 @@ export default function perfilScreen({ navigation }) {
             style={styles.avatar}
           />
           <Text style={styles.nombre}>Elena Rostova</Text>
-          
         </View>
 
+        {/* Sección de título o indicador estático en lugar de pestañas */}
         <View style={styles.tabs}>
-          <TouchableOpacity style={styles.tab} onPress={() => setTab("Created")}>
-            <Text style={[styles.tabTexto, tab === "Created" && styles.tabTextoActivo]}>
+          <View style={styles.tab}>
+            <Text style={[styles.tabTexto, styles.tabTextoActivo]}>
               Created
             </Text>
-            {tab === "Created" && <View style={styles.lineaActiva} />}
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.tab} onPress={() => setTab("Saved")}>
-            <Text style={[styles.tabTexto, tab === "Saved" && styles.tabTextoActivo]}>
-              Saved
-            </Text>
-            {tab === "Saved" && <View style={styles.lineaActiva} />}
-          </TouchableOpacity>
+            <View style={styles.lineaActiva} />
+          </View>
         </View>
 
         <View style={styles.grid}>
@@ -123,9 +115,9 @@ export default function perfilScreen({ navigation }) {
           ))}
 
           <TouchableOpacity onPress={() => navigation.navigate('login')}>
-              <Text>
-                  Login
-              </Text>
+            <Text>
+              Login
+            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -136,7 +128,7 @@ export default function perfilScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#0B1220",
   },
   header: {
     flexDirection: "row",
@@ -154,17 +146,16 @@ const styles = StyleSheet.create({
     height: 84,
     borderRadius: 42,
     marginBottom: 12,
-    backgroundColor: "#eee",
-    marginVertical: 20
+    backgroundColor: "#141C30",
   },
   nombre: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#111827",
+    color: "#F8FAFC",
   },
   usuario: {
     fontSize: 13,
-    color: "#6b7280",
+    color: "#8896AC",
     marginTop: 2,
   },
   stats: {
@@ -174,21 +165,21 @@ const styles = StyleSheet.create({
   },
   statsTexto: {
     fontSize: 13,
-    color: "#6b7280",
+    color: "#8896AC",
   },
   statsNumero: {
     fontWeight: "700",
-    color: "#111827",
+    color: "#F8FAFC",
   },
   statsSeparador: {
     marginHorizontal: 8,
-    color: "#9ca3af",
+    color: "#8896AC",
   },
   tabs: {
     flexDirection: "row",
     justifyContent: "center",
     borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    borderBottomColor: "#233047",
   },
   tab: {
     alignItems: "center",
@@ -197,17 +188,17 @@ const styles = StyleSheet.create({
   },
   tabTexto: {
     fontSize: 14,
-    color: "#9ca3af",
+    color: "#8896AC",
     fontWeight: "600",
   },
   tabTextoActivo: {
-    color: "#111827",
+    color: "#F8FAFC",
   },
   lineaActiva: {
     width: 32,
     height: 3,
     borderRadius: 3,
-    backgroundColor: "#111827",
+    backgroundColor: "#F8FAFC",
     marginTop: 6,
   },
   grid: {
@@ -226,17 +217,17 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 120,
     borderRadius: 12,
-    backgroundColor: "#eee",
+    backgroundColor: "#141C30",
   },
   tableroNombre: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#111827",
+    color: "#F8FAFC",
     marginTop: 8,
   },
   tableroPines: {
     fontSize: 12,
-    color: "#6b7280",
+    color: "#8896AC",
     marginTop: 2,
   },
 });

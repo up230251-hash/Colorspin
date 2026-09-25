@@ -92,25 +92,42 @@ export default function DetalleScreen({ route }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff', paddingHorizontal: 12 },
-  titulo: { fontSize: 24, fontWeight: 'bold', marginVertical: 16 },
+  // 1. Quitamos el centrado global para que la lista/fotos ocupen su espacio bien
+  container: {
+    flex: 1,
+    backgroundColor: '#0B1220',
+    paddingHorizontal: 12, // Añadido para que coincida con el margen de la versión funcional
+  },
+  
+  // 2. Centramos el título usando alineación de texto o un contenedor específico si hace falta
+  titulo: { 
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginTop: 20,
+    marginBottom: 16,
+    color: '#F8FAFC',
+    textAlign: 'center', // Esto centra el texto perfectamente sin afectar a la pantalla
+  },
+  
   list: { paddingBottom: 110 },
   pin: { flex: 1, aspectRatio: 1, margin: 4, borderRadius: 12 },
   empty: { textAlign: 'center', color: 'gray', marginTop: 40 },
+  
   cameraButton: {
     position: 'absolute',
-    bottom: 30,
+    bottom: 70,
     right: 24,
     width: 62,
     height: 62,
     borderRadius: 31,
-    backgroundColor: '#007AFF',
+    backgroundColor: '#66F1C2',
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 6,
   },
   cameraContainer: { flex: 1, backgroundColor: '#000' },
   closeButton: { position: 'absolute', top: 50, left: 20, padding: 8 },
+  
   controls: {
     position: 'absolute',
     bottom: 40,
@@ -120,7 +137,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
   },
+  
   flipButton: { width: 50, alignItems: 'center' },
+  
   shutter: {
     width: 74,
     height: 74,

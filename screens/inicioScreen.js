@@ -14,7 +14,7 @@ const fotosMock = [
   { idFoto: 6, idTablero: 12, idUsuario: 1, url: 'https://picsum.photos/id/60/400/500', fecha: '2026-09-01' },
 ];  
 
-export default function inicioScreen({ navigation }) {
+export default function InicioScreen({ navigation }) {
   const [orden, setOrden] = useState('nuevo'); 
 
   const fotosOrdenadas = [...fotosMock].sort((a, b) => {
