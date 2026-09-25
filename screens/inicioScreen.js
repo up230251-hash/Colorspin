@@ -67,7 +67,6 @@ export default function inicioScreen({ navigation }) {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0B1220', paddingTop: 10 },
   filtros: {
@@ -85,19 +84,19 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 20,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#141C30',
   },
   filtroActivo: { backgroundColor: '#66F1C2' },
-  filtroTexto: { fontSize: 13, color: '#333' },
-  filtroTextoActivo: { color: '#333' },
+  filtroTexto: { fontSize: 13, color: '#8896AC' },
+  filtroTextoActivo: { color: '#0B1220' },
   grid: { paddingHorizontal: 8 },
   card: {
     flex: 1,
     margin: 6,
     borderRadius: 12,
     overflow: 'hidden',
-    backgroundColor: '#eee',
+    backgroundColor: '#141C30',
   },
   imagen: { width: '100%', height: 180 },
-  vacio: { textAlign: 'center', marginTop: 40, color: '#999' },
+  vacio: { textAlign: 'center', marginTop: 40, color: '#8896AC' },
 });
